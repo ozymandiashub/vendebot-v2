@@ -1,0 +1,64 @@
+{
+  "name": "vendebot",
+  "version": "1.0.0",
+  "description": "VendeBot MVP - WhatsApp Business Assistant para comerciantes chilenos",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "postinstall": "prisma generate",
+    "db:push": "prisma db push",
+    "db:studio": "prisma studio",
+    "setup:meta": "tsx scripts/setup-meta-whatsapp.ts",
+    "test:meta-config": "tsx scripts/test-meta-config.ts",
+    "test:playwright": "playwright test",
+    "test:meta": "playwright test meta-setup"
+  },
+  "keywords": [
+    "whatsapp",
+    "chatbot",
+    "business",
+    "chile",
+    "twilio",
+    "ai"
+  ],
+  "author": "VendeBot Team",
+  "license": "MIT",
+  "dependencies": {
+    "@playwright/test": "^1.53.1",
+    "@prisma/client": "^5.8.0",
+    "@types/node": "^20.11.0",
+    "@types/node-fetch": "^2.6.12",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.0",
+    "crypto": "^1.0.1",
+    "dotenv": "^16.5.0",
+    "lucide-react": "^0.312.0",
+    "next": "^14.2.0",
+    "next-auth": "^4.24.0",
+    "node-fetch": "^3.3.2",
+    "openai": "^4.26.0",
+    "playwright": "^1.53.1",
+    "prisma": "^5.8.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "tailwind-merge": "^2.2.0",
+    "tailwindcss": "^3.4.0",
+    "tsx": "^4.20.3",
+    "twilio": "^4.20.0",
+    "typescript": "^5.3.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "autoprefixer": "^10.4.0",
+    "eslint": "^8.56.0",
+    "eslint-config-next": "^14.2.0",
+    "postcss": "^8.4.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
