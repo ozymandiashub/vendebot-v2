@@ -2,13 +2,15 @@
 
 export interface BusinessConfig {
   name: string;
-  category: 'retail' | 'restaurant' | 'services' | 'other';
+  category: 'digital_products' | 'canva_accounts' | 'retail' | 'restaurant' | 'services' | 'other';
   products: string[];
   hours: BusinessHours;
-  address: string;
+  address?: string;
   customFAQs: FAQ[];
   greetingMessage?: string;
   fallbackMessage?: string;
+  paymentMethods?: string[];
+  deliveryInfo?: string;
 }
 
 export interface BusinessHours {
@@ -43,7 +45,7 @@ export interface WhatsAppMessage {
 }
 
 export interface MessageClassification {
-  type: 'greeting' | 'hours' | 'products' | 'location' | 'delivery' | 'complex';
+  type: 'greeting' | 'hours' | 'products' | 'location' | 'delivery' | 'pricing' | 'payment' | 'canva_features' | 'support' | 'complex';
   confidence: number;
   keywords: string[];
 }
@@ -79,72 +81,141 @@ export interface TwilioWebhookBody {
   ApiVersion: string;
 }
 
-// Default FAQs for Roff Studio
+// Default FAQs for Canva Account Sales
 export const DEFAULT_FAQS: Record<string, string> = {
-  horario: `🕐 **Horarios de Atención - Roff Studio:**
+  saludo: "¡Hola! 🎨 Bienvenido a **CanvaProCL**. Vendemos cuentas Canva Pro y Premium a los mejores precios de Chile. ¿En qué podemos ayudarte hoy?",
 
-Lunes: 09:00 - 18:00
-Martes: 09:00 - 18:00
-Miércoles: 09:00 - 18:00
-Jueves: 09:00 - 18:00
-Viernes: 09:00 - 18:00
-Sábado: 10:00 - 14:00
-Domingo: Cerrado
+  precio: `💰 **Precios Canva Pro Chile 2025:**
 
-📞 También puedes llamarnos al +56 9 7917 1217`,
+🎨 **Canva Pro (1 año)**: $8.990 CLP
+⭐ **Canva Teams (1 año)**: $12.990 CLP  
+🎯 **Canva Premium (Lifetime)**: $19.990 CLP
 
-  precio: `💰 **Información de Precios:**
+✨ **Todos incluyen:**
+• 100M+ elementos premium
+• Fondo transparente
+• Redimensionar diseños
+• Almacenamiento ilimitado
+• Magic Resize y más!
 
-Nuestros precios varían según:
-• Complejidad del proyecto
-• Tecnologías requeridas
-• Tiempo de desarrollo
-• Funcionalidades específicas
+¿Cuál te interesa? 🤔`,
 
-📞 Te invitamos a una consulta GRATUITA para cotizar tu proyecto.
-¡Hablemos de tu idea!`,
+  productos: `🎨 **Catálogo Canva Disponible:**
 
-  stock: `🎯 **Servicios de Roff Studio:**
+1️⃣ **Canva Pro** - $8.990
+   • Duración: 1 año completo
+   • 100M+ recursos premium
+   • Hasta 5 usuarios
 
-• Desarrollo de Software
-• Aplicaciones Web y Móviles  
-• Consultoría Tecnológica
-• Automatización de Procesos
-• Integración de APIs
-• Soluciones Personalizadas
+2️⃣ **Canva Teams** - $12.990  
+   • Duración: 1 año completo
+   • Gestión de marca avanzada
+   • Hasta 10 usuarios
 
-💡 ¿Necesitas algo específico? ¡Conversemos!`,
+3️⃣ **Canva Premium Lifetime** - $19.990
+   • Acceso de por vida
+   • Todos los beneficios Pro
+   • Sin renovaciones
 
-  envio: `🚀 **Entrega de Proyectos:**
+💳 **Formas de pago**: Transferencia, WebPay, Mercado Pago
 
-• Desarrollo ágil en sprints
-• Entregas parciales cada 2 semanas  
-• Testing y feedback continuo
-• Deploy y puesta en producción
-• Soporte post-lanzamiento
+¿Cuál prefieres? ✨`,
 
-⏱️ Tiempos estimados según complejidad del proyecto.`,
+  canva_features: `✨ **¿Qué incluye Canva Pro?**
 
-  ubicacion: `📍 **Ubicación - Roff Studio:**
+🎨 **Elementos Premium:**
+• 100M+ fotos, videos y gráficos
+• Plantillas exclusivas ilimitadas
+• Efectos y filtros premium
 
-Trabajamos de forma remota y presencial en Santiago, Chile.
+�️ **Herramientas Avanzadas:**
+• Fondo transparente (PNG)
+• Magic Resize (cambiar tamaños)
+• Paletas de colores personalizadas
+• Subir fuentes propias
 
-🚗 Nos desplazamos para reuniones importantes
-💻 Reuniones online disponibles
-📧 Contacto: info@roffstudio.com
+☁️ **Almacenamiento:**
+• 1TB de almacenamiento en la nube
+• Sincronización en todos tus dispositivos
 
-¿Prefieres reunión presencial o virtual?`,
+¿Te interesa alguna característica específica? 🤔`,
 
-  saludo: "¡Hola! 👋 Bienvenido a **Roff Studio**. Somos especialistas en desarrollo de software y soluciones tecnológicas. ¿En qué podemos ayudarte hoy?",
+  pago: `💳 **Formas de Pago Disponibles:**
 
-  fuera_horario: `🌙 **Roff Studio - Fuera de horario**
+🏦 **Transferencia Bancaria**
+   • Banco de Chile
+   • Confirmación inmediata
 
-Gracias por tu mensaje! Te responderemos mañana en nuestro horario de atención.
+💰 **WebPay (Tarjetas)**
+   • Débito y crédito
+   • Pago seguro
 
-🕐 Lunes a Viernes: 09:00 - 18:00
-🕐 Sábados: 10:00 - 14:00
+🛒 **Mercado Pago**
+   • Todas las tarjetas
+   • Cuotas disponibles
 
-¡Que tengas un buen día! 😊`
+⚡ **Entrega Inmediata**: Una vez confirmado el pago, recibes tu cuenta Canva en menos de 5 minutos.
+
+¿Con cuál prefieres pagar? 🤔`,
+
+  entrega: `🚀 **Proceso de Entrega:**
+
+⏱️ **Tiempo**: 2-5 minutos después del pago
+📧 **Método**: Por este mismo WhatsApp
+📋 **Recibes**: Email y contraseña de tu cuenta
+
+🔒 **Garantía**:
+• Cuenta 100% funcional
+• Soporte 30 días gratis
+• Reemplazo si hay problemas
+
+✅ **Activación**: Lista para usar al instante
+
+¿Alguna duda sobre la entrega? 🤔`,
+
+  soporte: `�️ **Soporte y Garantías:**
+
+✅ **Garantía 30 días**:
+• Si la cuenta presenta problemas
+• Reemplazo inmediato sin costo
+• Soporte técnico incluido
+
+� **Canales de soporte**:
+• WhatsApp (este mismo número)
+• Respuesta en menos de 2 horas
+• Lunes a Domingo 9:00 - 21:00
+
+🔧 **Ayuda incluida**:
+• Configuración inicial
+• Tutoriales básicos de Canva
+• Resolución de problemas
+
+¿Necesitas ayuda con algo específico? 🤔`,
+
+  horario: `🕐 **Horarios de Atención:**
+
+📱 **WhatsApp Automático**: 24/7
+👨‍💼 **Soporte Humano**: 
+   • Lunes a Domingo: 9:00 - 21:00
+   • Respuesta promedio: 2 horas
+
+⚡ **Entregas Automáticas**: 
+   • 24 horas al día
+   • Procesamos pagos al instante
+
+¿Tienes alguna consulta urgente? 🚀`,
+
+  fuera_horario: `🌙 **Mensaje Automático - Fuera de Horario**
+
+¡Gracias por tu interés en Canva Pro! 🎨
+
+✅ Puedes hacer tu pedido ahora mismo
+⚡ Las entregas son automáticas 24/7
+� Procesar pago y recibir cuenta al instante
+
+🕐 **Soporte humano**: Mañana 9:00 - 21:00
+
+¿Quieres ver nuestros productos disponibles? 😊`
 };
 
 export interface UserSession {

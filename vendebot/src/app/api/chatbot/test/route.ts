@@ -10,31 +10,28 @@ export async function POST(req: NextRequest) {
 
     if (!message) {
       return NextResponse.json({ error: 'Message is required' }, { status: 400 });
-    }    // Si no hay config, usar configuración de Roff Studio
+    }    // Si no hay config, usar configuración de CanvaProCL (venta personal de Canva)
     const businessConfig: BusinessConfig = config || {
-      name: "Roff Studio",
-      category: "software_development",
+      name: "CanvaProCL",
+      category: "canva_accounts",
       products: [
-        "Desarrollo de Software",
-        "Aplicaciones Web",
-        "Apps Móviles", 
-        "Consultoría Tecnológica",
-        "Automatización de Procesos",
-        "Integración de APIs"
+        "Canva Pro (1 año) - $8.990 CLP",
+        "Canva Teams (1 año) - $12.990 CLP",
+        "Canva Premium Lifetime - $19.990 CLP"
       ],
       address: "Santiago, Chile",
       hours: {
-        monday: { open: "09:00", close: "18:00", closed: false },
-        tuesday: { open: "09:00", close: "18:00", closed: false },
-        wednesday: { open: "09:00", close: "18:00", closed: false },
-        thursday: { open: "09:00", close: "18:00", closed: false },
-        friday: { open: "09:00", close: "18:00", closed: false },
-        saturday: { open: "10:00", close: "14:00", closed: false },
-        sunday: { open: "00:00", close: "00:00", closed: true },
+        monday: { open: "09:00", close: "21:00", closed: false },
+        tuesday: { open: "09:00", close: "21:00", closed: false },
+        wednesday: { open: "09:00", close: "21:00", closed: false },
+        thursday: { open: "09:00", close: "21:00", closed: false },
+        friday: { open: "09:00", close: "21:00", closed: false },
+        saturday: { open: "09:00", close: "21:00", closed: false },
+        sunday: { open: "09:00", close: "21:00", closed: false },
       },
       customFAQs: [],
-      greetingMessage: "¡Hola! Bienvenido a **Roff Studio**. Somos especialistas en desarrollo de software y soluciones tecnológicas. ¿En qué podemos ayudarte hoy?",
-      fallbackMessage: "Gracias por tu consulta. Un especialista de Roff Studio te contactará pronto para conversar sobre tu proyecto 👨‍💻"
+      greetingMessage: "¡Hola! 🎨 Bienvenido a **CanvaProCL**\n\nSomos especialistas en cuentas Canva Premium y Pro. Tenemos los mejores precios del mercado con entrega inmediata:\n\n🎯 **Nuestros Productos:**\n• Canva Pro (1 año) - $8.990\n• Canva Teams (1 año) - $12.990 \n• Canva Premium Lifetime - $19.990\n\n💳 **Métodos de Pago:** Transferencia, WebPay, MercadoPago\n📱 **Entrega:** Inmediata por WhatsApp\n\n¿Qué producto te interesa? 👇",
+      fallbackMessage: "Gracias por tu consulta sobre Canva. Te contactaremos pronto para ayudarte con tu compra 🎨"
     };
 
     // Generar respuesta usando la misma lógica del webhook

@@ -1,5 +1,14 @@
 // VendeBot MVP - Message Classification and Response Generation
 import { BusinessConfig, MessageClassification, BusinessHours, DEFAULT_FAQS } from '@/types/vendebot';
+import { 
+  detectPurchaseIntent, 
+  generateProductCatalog, 
+  generateProductDetails,
+  generatePaymentInstructions,
+  generateAccountDelivery,
+  CANVA_PRODUCTS,
+  PAYMENT_METHODS
+} from './canva-sales';
 
 /**
  * Clasifica el tipo de mensaje recibido basado en palabras clave
@@ -7,27 +16,39 @@ import { BusinessConfig, MessageClassification, BusinessHours, DEFAULT_FAQS } fr
 export function classifyMessage(message: string): MessageClassification {
   const normalizedMessage = message.toLowerCase().trim();
   
-  // Patterns para diferentes tipos de consulta en español chileno
+  // Patterns para diferentes tipos de consulta relacionadas con Canva
   const patterns = {
     greeting: {
       regex: /^(hola|hi|buenas|buenos días|buenas tardes|buenas noches|saludos|que tal)/,
       keywords: ['hola', 'buenas', 'saludos', 'que tal']
     },
+    products: {
+      regex: /(canva|pro|premium|teams|lifetime|cuenta|cuentas|planes|plan|producto|productos|catalogo|que tienen|que venden)/,
+      keywords: ['canva', 'pro', 'premium', 'teams', 'cuenta', 'planes', 'catalogo']
+    },
+    pricing: {
+      regex: /(precio|costo|valor|cuanto|cuánto|vale|cotizar|cotización|precios|barato)/,
+      keywords: ['precio', 'costo', 'valor', 'cuanto', 'vale', 'barato']
+    },
+    canva_features: {
+      regex: /(que incluye|funciones|características|beneficios|features|elementos|plantillas|fondo transparente|magic resize)/,
+      keywords: ['incluye', 'funciones', 'características', 'beneficios', 'elementos', 'plantillas']
+    },
+    payment: {
+      regex: /(pago|pagar|transferencia|webpay|mercado pago|tarjeta|como pago|forma de pago|métodos)/,
+      keywords: ['pago', 'pagar', 'transferencia', 'webpay', 'mercado', 'tarjeta']
+    },
+    delivery: {
+      regex: /(entrega|cuando llega|cuanto demora|envío|recibo|entregan|delivery|inmediato)/,
+      keywords: ['entrega', 'llega', 'demora', 'envío', 'recibo', 'inmediato']
+    },
+    support: {
+      regex: /(ayuda|soporte|garantía|problema|no funciona|error|ayúdame|consulta|duda)/,
+      keywords: ['ayuda', 'soporte', 'garantía', 'problema', 'error', 'duda']
+    },
     hours: {
       regex: /(horario|abierto|cerrado|atención|atienden|que hora|abren|cierran|horarios)/,
       keywords: ['horario', 'abierto', 'cerrado', 'atención', 'hora']
-    },
-    products: {
-      regex: /(precio|costo|valor|producto|vende|stock|disponible|cuanto|catalogo|que tienen)/,
-      keywords: ['precio', 'costo', 'producto', 'stock', 'disponible', 'catalogo']
-    },
-    location: {
-      regex: /(dirección|ubicación|donde están|como llegar|direccion|ubicacion|donde quedan)/,
-      keywords: ['dirección', 'ubicación', 'donde', 'llegar', 'direccion']
-    },
-    delivery: {
-      regex: /(envío|despacho|delivery|entrega|envios|reparto|domicilio)/,
-      keywords: ['envío', 'despacho', 'delivery', 'entrega', 'domicilio']
     }
   };
 
@@ -103,19 +124,22 @@ export function formatBusinessHours(hours: BusinessHours): string {
 }
 
 /**
- * Formatea la lista de productos del negocio
+ * Formatea la lista de productos del negocio (específico para Canva)
  */
-export function formatProductList(products: string[]): string {
-  if (products.length === 0) {
-    return "¡Hola! Para consultar sobre nuestros productos disponibles, escríbeme qué necesitas 😊";
+export function formatProductList(products: string[], businessConfig?: BusinessConfig): string {
+  if (products.length === 0 || (businessConfig && businessConfig.category === 'canva_accounts')) {
+    // Usar el catálogo especializado de Canva
+    return generateProductCatalog();
   }
 
-  let productList = '📦 **Nuestros Productos:**\n\n';
+  let productList = '🎨 **Productos Canva Disponibles:**\n\n';
   products.forEach((product, index) => {
     productList += `${index + 1}. ${product}\n`;
   });
   
-  productList += '\n¿Sobre cuál te gustaría saber más? 🤔';
+  productList += '\n💳 **Formas de pago**: Transferencia, WebPay, Mercado Pago\n';
+  productList += '⚡ **Entrega**: Inmediata después del pago\n\n';
+  productList += '¿Cuál te interesa? 🤔';
   
   return productList;
 }
@@ -131,25 +155,33 @@ export function generatePersonalizedResponse(
   const replacePlaceholders = (text: string): string => {
     return text
       .replace(/\[NEGOCIO\]/g, businessConfig.name)
-      .replace(/\[DIRECCION\]/g, businessConfig.address || 'consultar dirección');
+      .replace(/\[DIRECCION\]/g, businessConfig.address || 'venta online');
   };
 
   switch (messageType) {
     case 'greeting':
       return businessConfig.greetingMessage || 
         replacePlaceholders(DEFAULT_FAQS.saludo);
+      case 'products':
+      return formatProductList(businessConfig.products, businessConfig);
+    
+    case 'pricing':
+      return DEFAULT_FAQS.precio;
+    
+    case 'canva_features':
+      return DEFAULT_FAQS.canva_features;
+    
+    case 'payment':
+      return DEFAULT_FAQS.pago;
+    
+    case 'delivery':
+      return DEFAULT_FAQS.entrega;
+    
+    case 'support':
+      return DEFAULT_FAQS.soporte;
     
     case 'hours':
       return formatBusinessHours(businessConfig.hours);
-    
-    case 'products':
-      return formatProductList(businessConfig.products);
-    
-    case 'location':
-      return replacePlaceholders(DEFAULT_FAQS.ubicacion);
-    
-    case 'delivery':
-      return DEFAULT_FAQS.envio;
     
     default:
       return businessConfig.fallbackMessage || 
@@ -190,16 +222,23 @@ export async function generateResponse(
   message: string, 
   businessConfig: BusinessConfig
 ): Promise<string> {
-  // 1. Buscar en FAQs personalizadas primero
+  // 1. Detectar intención de compra (específico para Canva)
+  const purchaseIntent = detectPurchaseIntent(message);
+  
+  if (purchaseIntent.intent !== 'none') {
+    return handlePurchaseFlow(message, purchaseIntent, businessConfig);
+  }
+  
+  // 2. Buscar en FAQs personalizadas primero
   const customResponse = searchCustomFAQs(message, businessConfig);
   if (customResponse) {
     return customResponse;
   }
   
-  // 2. Clasificar el mensaje
+  // 3. Clasificar el mensaje
   const classification = classifyMessage(message);
   
-  // 3. Verificar horario comercial para consultas complejas
+  // 4. Verificar horario comercial para consultas complejas
   if (classification.type === 'complex') {
     if (isBusinessHours(businessConfig.hours)) {
       return "Un ejecutivo te contactará en breve para ayudarte con tu consulta 👨‍💼";
@@ -208,6 +247,40 @@ export async function generateResponse(
     }
   }
   
-  // 4. Generar respuesta personalizada
+  // 5. Generar respuesta personalizada
   return generatePersonalizedResponse(classification.type, businessConfig);
+}
+
+/**
+ * Maneja el flujo de compra específico para Canva
+ */
+function handlePurchaseFlow(
+  message: string,
+  intent: any,
+  businessConfig: BusinessConfig
+): string {
+  switch (intent.intent) {
+    case 'product_selection':
+      if (intent.productIndex !== undefined && intent.productIndex < CANVA_PRODUCTS.length) {
+        const selectedProduct = CANVA_PRODUCTS[intent.productIndex];
+        return generateProductDetails(selectedProduct);
+      }
+      return 'Por favor selecciona un número válido del catálogo (1, 2 o 3) 😊';
+    
+    case 'payment_method':
+      if (intent.paymentMethodIndex !== undefined && intent.paymentMethodIndex < PAYMENT_METHODS.length) {
+        // En una implementación real, necesitaríamos mantener el estado del producto seleccionado
+        // Por ahora, usaremos el primer producto como ejemplo
+        const paymentMethod = PAYMENT_METHODS[intent.paymentMethodIndex];
+        const exampleProduct = CANVA_PRODUCTS[0]; // En producción, esto vendría del estado de la conversación
+        return generatePaymentInstructions(paymentMethod.id, exampleProduct);
+      }
+      return 'Por favor selecciona un método de pago válido (1, 2 o 3) 😊';
+    
+    case 'purchase_confirmation':
+      return generateProductCatalog();
+    
+    default:
+      return generateProductCatalog();
+  }
 }
