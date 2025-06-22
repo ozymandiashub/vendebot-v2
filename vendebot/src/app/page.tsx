@@ -16,9 +16,13 @@ export default function HomePage() {
             <div className="flex items-center space-x-4">
               <a href="https://wa.me/56979171217?text=Hola!%20Quiero%20información%20sobre%20Canva%20Pro" 
                  target="_blank" 
-                 className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors">
-                💬 WhatsApp
+                 className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors flex items-center gap-2">
+                <span>💬</span>
+                <span>WhatsApp</span>
               </a>
+              <div className="text-sm text-gray-600">
+                <span className="text-green-600">●</span> En línea
+              </div>
             </div>
           </div>
         </div>
@@ -254,19 +258,66 @@ export default function HomePage() {
           <h2 className="text-3xl font-bold mb-4">¿Listo para empezar con Canva Pro?</h2>
           <p className="text-xl mb-6">Únete a más de 1000+ diseñadores satisfechos</p>
           
-          <a href="https://wa.me/56979171217?text=Hola!%20Quiero%20comprar%20Canva%20Pro" target="_blank">
-            <Button size="large" variant="secondary" className="bg-white text-blue-600 hover:bg-gray-100">
-              Comprar Ahora por WhatsApp 🚀
-            </Button>
-          </a>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-6">
+            <a href="https://wa.me/56979171217?text=Hola!%20Quiero%20comprar%20Canva%20Pro" target="_blank">
+              <Button size="large" variant="secondary" className="bg-white text-blue-600 hover:bg-gray-100 w-full sm:w-auto">
+                💬 Comprar por WhatsApp
+              </Button>
+            </a>
+            <a href="mailto:ventas@canvaprocl.com?subject=Consulta%20Canva%20Pro&body=Hola,%20quiero%20información%20sobre%20Canva%20Pro" target="_blank">
+              <Button size="large" variant="secondary" className="bg-green-500 text-white hover:bg-green-600 w-full sm:w-auto">
+                📧 Escribir Email
+              </Button>
+            </a>
+          </div>
+          
+          <div className="text-sm text-blue-100">
+            <p>📱 WhatsApp: +56 9 7917 1217 | � Email: ventas@canvaprocl.com</p>
+            <p className="mt-1">✅ Respuesta garantizada en menos de 30 minutos</p>
+          </div>
         </div>
       </main>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white py-8 mt-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <p>&copy; 2025 CanvaProCL. Tu tienda de confianza para cuentas Canva originales 🎨</p>
-          <p className="mt-2 text-gray-400">WhatsApp: +56 9 7917 1217</p>
+      <footer className="bg-gray-900 text-white py-12 mt-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid md:grid-cols-3 gap-8 text-center md:text-left">
+            
+            {/* Contacto */}
+            <div>
+              <h3 className="text-lg font-semibold mb-4">📞 Contacto</h3>
+              <div className="space-y-2 text-gray-300">
+                <p>📱 WhatsApp: +56 9 7917 1217</p>
+                <p>📧 Email: ventas@canvaprocl.com</p>
+                <p>🕐 Horario: 9:00 - 21:00 hrs</p>
+              </div>
+            </div>
+
+            {/* Productos */}
+            <div>
+              <h3 className="text-lg font-semibold mb-4">🎨 Productos</h3>
+              <div className="space-y-2 text-gray-300">
+                <p>• Canva Pro (1 año) - $8.990</p>
+                <p>• Canva Teams (1 año) - $12.990</p>
+                <p>• Canva Premium Lifetime - $19.990</p>
+              </div>
+            </div>
+
+            {/* Garantías */}
+            <div>
+              <h3 className="text-lg font-semibold mb-4">✅ Garantías</h3>
+              <div className="space-y-2 text-gray-300">
+                <p>🚀 Entrega inmediata</p>
+                <p>🔄 Reemplazo gratuito</p>
+                <p>💯 Cuentas originales</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="border-t border-gray-700 mt-8 pt-8 text-center">
+            <p>&copy; 2025 CanvaProCL. Tu tienda de confianza para cuentas Canva originales 🎨</p>
+            <p className="mt-2 text-gray-400">Powered by VendeBot - Bot inteligente de ventas</p>
+          </div>
         </div>
       </footer>
     </div>
