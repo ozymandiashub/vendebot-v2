@@ -1,6 +1,5 @@
 [build]
   command = "npm run build"
-  functions = ".netlify/functions"
   publish = ".next"
 
 [build.environment]
@@ -8,16 +7,11 @@
   NPM_VERSION = "9"
   NEXT_TELEMETRY_DISABLED = "1"
 
+# Essential for Next.js API routes
 [[plugins]]
   package = "@netlify/plugin-nextjs"
 
-# Configuración para API Routes
-[[redirects]]
-  from = "/api/*"
-  to = "/.netlify/functions/__api__/:splat"
-  status = 200
-
-# Headers para CORS
+# Headers for API endpoints
 [[headers]]
   for = "/api/*"
   [headers.values]
