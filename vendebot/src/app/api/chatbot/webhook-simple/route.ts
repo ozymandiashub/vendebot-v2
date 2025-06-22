@@ -132,12 +132,14 @@ export async function POST(req: NextRequest) {
     } catch (error) {
       console.error('Error generating response:', error);
       response = `Gracias por tu mensaje. Un ejecutivo de ${PERSONAL_CANVA_BUSINESS.name} te contactará pronto 👨‍💼`;
-      responseType = 'fallback';
-    }// Enviar respuesta usando Meta WhatsApp Business API
+      responseType = 'fallback';    }// Enviar respuesta usando Meta WhatsApp Business API
     let messageSent = false;
+    
+    // En producción o si el token está configurado correctamente, enviar mensaje real
     if (process.env.WHATSAPP_ACCESS_TOKEN && 
-        process.env.WHATSAPP_ACCESS_TOKEN !== 'pending_verification' && 
-        process.env.NODE_ENV === 'production') {
+        process.env.WHATSAPP_ACCESS_TOKEN !== 'pending_verification' &&
+        process.env.WHATSAPP_ACCESS_TOKEN.startsWith('EAG')) {
+      console.log('📱 Enviando mensaje real via WhatsApp Business API...');
       messageSent = await sendMetaWhatsAppMessage(clientNumber, response);
     } else {
       console.log('🧪 MODO TESTING: Simulando envío de mensaje (Access Token no configurado o en desarrollo)');

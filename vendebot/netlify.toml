@@ -1,10 +1,26 @@
 [build]
   command = "npm run build"
   functions = ".netlify/functions"
+  publish = ".next"
 
 [build.environment]
   NODE_VERSION = "18"
   NPM_VERSION = "9"
+  NEXT_TELEMETRY_DISABLED = "1"
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
+
+# Configuración para API Routes
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/__api__/:splat"
+  status = 200
+
+# Headers para CORS
+[[headers]]
+  for = "/api/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Access-Control-Allow-Methods = "GET, POST, PUT, DELETE, OPTIONS"
+    Access-Control-Allow-Headers = "Content-Type, Authorization"
